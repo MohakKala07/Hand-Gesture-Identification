@@ -1,7 +1,11 @@
+# Importing Important Libraries
+
 import pygame
 import random
 import cv2
 import mediapipe as mp
+
+# Snake Game main function
 
 
 def SnakeGame():
@@ -15,19 +19,21 @@ def SnakeGame():
     pygame.display.update()
     Clock = pygame.time.Clock()
     Score_font = pygame.font.SysFont(None, 30)
-
+# To Write Score on Display
 
     def write_score(text, color, x, y):
         screen_text = Score_font.render(text, True, color)
         Snake_Window.blit(screen_text, [x, y])
-
+# Function to create Snake Body
 
     def create_body(Snake_Window, color, Snake_list, Snake_Size):
         for x, y in Snake_list:
             pygame.draw.rect(Snake_Window, color, [x, y, Snake_Size, Snake_Size])
-
+# The Game Running Function
 
     def Game_loop():
+
+        # Initializing Initial Default Value
         game_exit = False
         game_over = False
         Snake_head_x = 100
@@ -69,22 +75,28 @@ def SnakeGame():
                                 cv2.circle(image, (300, 300), 500, Blue, cv2.FILLED)
                                 cv2.circle(image, (300, 300), 30, Red, cv2.FILLED)
                                 cv2.circle(image, (pos_x, pos_y), 25, hybrid, cv2.FILLED)
-                                if pos_x > 350 and pos_y < 350 and pos_y > 250:
+
+                                # Adjusting Speed of Snake w.r.t. the Center
+
+                                if pos_x > 350 and 350 > pos_y > 250:
                                     Speed_x = -3
                                     Speed_y = 0
-                                if pos_x < 250 and pos_y < 350 and pos_y > 250:
+                                if pos_x < 250 and 350 > pos_y > 250:
                                     Speed_x = 3
                                     Speed_y = 0
-                                if pos_y < 250 and pos_x < 350 and pos_x > 250:
+                                if pos_y < 250 and 350 > pos_x > 250:
                                     Speed_y = -3
                                     Speed_x = 0
-                                if pos_y > 350 and pos_x < 350 and pos_x > 250:
+                                if pos_y > 350 and 350 > pos_x > 250:
                                     Speed_y = 3
                                     Speed_x = 0
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         game_exit = True
-                if abs(Snake_head_x-Food_x) < 30 and abs(Snake_head_y-Food_y)<30:
+
+                # Updating Position of Food once Eaten by Snake, Updating the Score, length of Snake and Speed
+
+                if abs(Snake_head_x-Food_x) < 30 and abs(Snake_head_y-Food_y) < 30:
                     Food_x = random.randint(2, 19)*30
                     Food_y = random.randint(2, 19) * 30
                     Score += 5
@@ -97,18 +109,21 @@ def SnakeGame():
                 body.append(Snake_head_x)
                 body.append(Snake_head_y)
                 Snake_list.append(body)
-                if Snake_head_x<0 or Snake_head_x>600 or Snake_head_y<50 or Snake_head_y>600:
+
+                # End Game if Snake goes Out of Bounds
+                
+                if Snake_head_x < 0 or Snake_head_x > 600 or Snake_head_y < 50 or Snake_head_y > 600:
                     game_over = True
-                if Snake_length<len(Snake_list):
+                if Snake_length < len(Snake_list):
                     del Snake_list[0]
-                if body in Snake_list[:-1] :
+                if body in Snake_list[:-1]:
                     game_over = True
-                create_body(Snake_Window,Red,Snake_list,Snake_Size)
+                create_body(Snake_Window, Red, Snake_list, Snake_Size)
                 pygame.draw.rect(Snake_Window, hybrid, [0, 0, 600, 50])
                 pygame.draw.rect(Snake_Window, Green, [Food_x, Food_y, Snake_Size, Snake_Size])
-                pygame.draw.rect(Snake_Window,Red,[Snake_head_x,Snake_head_y,Snake_Size,Snake_Size])
+                pygame.draw.rect(Snake_Window, Red, [Snake_head_x, Snake_head_y, Snake_Size, Snake_Size])
                 pygame.display.update()
-                cv2.imshow("Snake_game",image)
+                cv2.imshow("Snake_game", image)
                 cv2.waitKey(1)
                 Clock.tick(fps)
     Game_loop()
